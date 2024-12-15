@@ -24,21 +24,22 @@
 
             <hr>
             <h3>Leave a Comment</h3>
-            @if(session()->has('success'))
-                <span class="text-success">{{ session('success') }}</span>
-            @endif
-            <form action="{{ route('comment', [$article->id]) }}" method="post">
+            <form action="{{ route('comment', [$article->id]) }}" method="post" id="form">
                 @csrf
                 <div class="form-group">
                     <input type="text" class="form-control" name="title" id="title" placeholder="Message subject"
                            value="{{ old('title') }}">
+                    <span class="text-danger" id="title-error"></span>
                 </div>
                 @if($errors->has('title'))
                     <span class="text-danger">{{ $errors->first('title') }}</span>
                 @endif
                 <div class="form-group">
-                    <textarea placeholder="Message" name="content" class="form-control">{{ old('content') }}</textarea>
+                    <textarea placeholder="Message" name="content" class="form-control"
+                              id="content">{{ old('content') }}</textarea>
+                    <span class="text-danger" id="content-error"></span>
                 </div>
+
                 @if($errors->has('content'))
                     <span class="text-danger">{{ $errors->first('content') }}</span>
                 @endif
@@ -46,16 +47,11 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
+            <span class="text-success" id="success-response"></span>
 
         </div>
-        <div class="mb-5">
-            @foreach($comments as $comment)
-                <hr>
-                <i class="fa fa-user-circle"></i><span
-                    style="font-size: 24px;font-weight: bold;">{{ $comment->title }}</span>
-                <p>{{ $comment->content }}</p>
-                <p style="text-align: end">{{ \Illuminate\Support\Carbon::parse($comment->created_at)->longRelativeDiffForHumans() }}</p>
-            @endforeach
+        <div class="mb-5" id="article-comment">
+            @include('article_comment')
         </div>
 
     </div>
@@ -84,5 +80,53 @@
                 }
             });
         }, 5000)
+
+        $("#form").submit(function (e) {
+            e.preventDefault()
+            let title = $("#title").val()
+            let content = $("#content").val()
+            if (title.length === 0) {
+                $("#title-error").text('The title field is required.')
+            }
+            if (content.length === 0) {
+                $("#content-error").text('The content field is required.')
+            }
+            if (title.length > 0 && content.length > 0) {
+                $.ajax({
+                    url: "{{ route('comment', [$article->id]) }}",
+                    method: "POST",
+                    data: {title: title, content: content, _token: "{{ csrf_token() }}"},
+                    success: function (result) {
+                        if (result.data) {
+                            $("#article-comment").html(result.data);
+                        }
+                        if (result.message) {
+                            $("#success-response").text(result.message);
+                        }
+                        $("#title").val('')
+                        $("#content").val('')
+                        setTimeout(function () {
+                            $("#success-response").text('');
+                        }, 1000)
+                    },
+                    error: function (e) {
+                        let resData = e.responseJSON
+                        if (resData.errors) {
+                            if (resData.errors.title) {
+                                $("#title-error").text(resData.errors.title.join(', '))
+                            }
+                            if (resData.errors.content) {
+                                $("#content-error").text(resData.errors.content.join(', '))
+                            }
+                        }
+                    }
+                });
+            }
+            setTimeout(function () {
+                $("#title-error").text('')
+                $("#content-error").text('')
+            }, 5000)
+
+        });
     </script>
 @endsection

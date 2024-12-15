@@ -29,7 +29,10 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $articles = ArticleModel::query()->with('isLiked')->paginate(6);
+        $articles = ArticleModel::query()
+            ->orderBy('id', 'DESC')
+            ->with('isLiked')
+            ->paginate(6);
         return view('home', compact('articles'));
     }
 
@@ -42,7 +45,10 @@ class HomeController extends Controller
         $tags = TagModel::query()->get();
 
         $filters[] = ArticleFilter::getRequest($request);
-        $articles = ArticleModel::applyEloquentFilters($filters)->with('isLiked')->paginate(10);
+        $articles = ArticleModel::applyEloquentFilters($filters)
+            ->orderBy('id', 'DESC')
+            ->with('isLiked')
+            ->paginate(10);
 
         return view('articles', compact('articles', 'tags'));
     }
@@ -67,15 +73,23 @@ class HomeController extends Controller
     /**
      * @param CommentRequest $request
      * @param int $id
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function comment(CommentRequest $request, int $id): RedirectResponse
+    public function comment(CommentRequest $request, int $id): JsonResponse
     {
         $article = ArticleModel::query()
             ->where('id', '=', $id)
             ->firstOrFail();
         $this->commentService->storeComment($article->id, $request->validated('title'), $request->validated('content'));
-        return redirect()->route('article', [$article->slug])->with('success', 'Successfully');
+
+        $comments = CommentModel::query()
+            ->where('article_id', '=', $article->id)
+            ->orderBy('id', 'DESC')
+            ->get();
+        return response()->json([
+            'message' => "Ваше сообщение успешно отправлено",
+            "data" => \view('article_comment', compact('article', 'comments'))->render()
+        ]);
     }
 
     /**
