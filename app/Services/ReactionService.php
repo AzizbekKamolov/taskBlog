@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\CommentModel;
+use App\DataObjects\ReactionData;
 use App\Models\ReactionModel;
 
 class ReactionService
@@ -15,7 +15,8 @@ class ReactionService
             ->where('article_id', '=', $articleId)
             ->first();
         if ($reaction) {
-            if ($reaction->liked === 1) {
+            $reactionData = ReactionData::fromModel($reaction);
+            if ($reactionData->liked === true) {
                 $reaction->update([
                     'liked' => false
                 ]);
@@ -42,7 +43,8 @@ class ReactionService
             ->where('article_id', '=', $articleId)
             ->first();
         if ($reaction) {
-            if ($reaction->showed === 0) {
+            $reactionData = ReactionData::fromModel($reaction);
+            if ($reactionData->showed === false) {
                 $reaction->update([
                     'showed' => true
                 ]);

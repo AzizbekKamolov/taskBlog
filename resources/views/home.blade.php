@@ -7,7 +7,9 @@
                     <div class="card mb-3" >
                         <img class="card-img-top" src="{{ $article->photo }}" alt="Card image cap">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $article->title }}</h5>
+                            <h5 class="card-title">
+                                <a href="{{ route('article', [$article->slug]) }}">{{ $article->title }}</a>
+                            </h5>
                             <p class="card-text">{{ $article->short_content }}</p>
                             <div class="d-flex justify-content-between">
                                 <div>

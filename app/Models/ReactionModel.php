@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property int $id;
  * @property int $article_id;
- * @property bool @showed;
- * @property bool @liked;
+ * @property string $ip;
+ * @property bool $showed;
+ * @property bool $liked;
  * @property string $created_at;
  * @property string $updated_at;
  */
