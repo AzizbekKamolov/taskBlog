@@ -157,9 +157,9 @@
 
 ## Примерный вид интерфейсов
 ### Главная страница
-![Главная страница](https://i.ibb.co/Yykzsby/3.jpg)
+![Главная страница](https://github.com/AzizbekKamolov/taskBlog/blob/main/public/3.jpg)
 ### Каталог статей
-![Каталог статей](https://i.ibb.co/f4WF9nb/4.jpg)
-![Каталог статей](https://i.ibb.co/sFpCfrz/2.jpg)
+![Каталог статей](https://github.com/AzizbekKamolov/taskBlog/blob/main/public/4.jpg)
+![Каталог статей](https://github.com/AzizbekKamolov/taskBlog/blob/main/public/2.jpg)
 ### Статья
-![Статья](https://i.ibb.co/5LYDhRT/1.jpg)
+![Статья](https://github.com/AzizbekKamolov/taskBlog/blob/main/public/1.jpg)
